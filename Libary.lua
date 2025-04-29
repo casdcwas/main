@@ -44,7 +44,6 @@ local Library = {
 
     Signals = {};
     ScreenGui = ScreenGui;
-    CustomAssetId = "rbxassetid://12977615774", -- Default asset ID
 };
 
 local RainbowStep = 0
@@ -1685,7 +1684,6 @@ do
         if type(Info.Tooltip) == 'string' then
             Library:AddToolTip(Info.Tooltip, TextBoxOuter)
         end
-
         Library:Create('UIGradient', {
             Color = ColorSequence.new({
                 ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
@@ -2464,7 +2462,7 @@ do
 
                             Library:AttemptSave();
                         end;
-                    end;
+                    end
                 end);
 
                 Table:UpdateButton();
@@ -2980,7 +2978,14 @@ function Library:CreateWindow(...)
     local Window = {
         Tabs = {};
     };
-
+    local CustomImage = Library:Create('ImageLabel', {
+        Image = 'rbxassetid://75346641319200', -- Replace <your_image_id> with your image asset ID
+        Size = UDim2.new(0, 100, 0, 100), -- Adjust size (width, height)
+        Position = UDim2.new(0, 10, 0, 10), -- Adjust position (x, y)
+        BackgroundTransparency = 1, -- Make the background transparent
+        ZIndex = 100, -- Ensure it appears above other UI elements
+        Parent = ScreenGui, -- Or set this to the desired parent, e.g., `Inner` or `TabFrame`
+    })
     local Outer = Library:Create('Frame', {
         AnchorPoint = Config.AnchorPoint,
         BackgroundColor3 = Color3.new(0, 0, 0);
@@ -3433,8 +3438,9 @@ function Library:CreateWindow(...)
 
                 local Button = Library:Create('Frame', {
                     BackgroundColor3 = Library.MainColor;
-                    BorderColor3 = Color3.new(0, 0, 0);
-                    Size = UDim2.new(0.5, 0, 1, 0);
+                    BorderColor3 = Library.OutlineColor;
+                    BorderMode = Enum.BorderMode.Middle;
+                    Size = UDim2.new(1, -1, 0, 20);
                     ZIndex = 6;
                     Parent = TabboxButtons;
                 });
@@ -3532,7 +3538,7 @@ function Library:CreateWindow(...)
                 end;
 
                 Button.InputBegan:Connect(function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
+                    if Input.UserInputType == Enum.UserInputType.MouseButton1 then
                         Tab:Show();
                         Tab:Resize();
                     end;
