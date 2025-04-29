@@ -16,7 +16,32 @@ ProtectGui(ScreenGui);
 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
 ScreenGui.Parent = CoreGui;
+local RunService = game:GetService("RunService")
 
+local BackgroundFrame = Instance.new("Frame")
+BackgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+BackgroundFrame.Position = UDim2.new(0, 0, 0, 0)
+BackgroundFrame.BackgroundTransparency = 1
+BackgroundFrame.ZIndex = 0
+BackgroundFrame.Parent = ScreenGui
+
+local Gradient = Instance.new("UIGradient")
+Gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.new(0, 1, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.new(0, 0, 0)),
+    ColorSequenceKeypoint.new(1, Color3.new(0, 1, 0))
+})
+Gradient.Rotation = 90
+Gradient.Parent = BackgroundFrame
+
+local offset = 0
+RunService.RenderStepped:Connect(function(deltaTime)
+    offset = offset + deltaTime * 0.5
+    if offset > 1 then
+        offset = offset - 1
+    end
+    Gradient.Offset = Vector2.new(0, offset)
+end)
 local Toggles = {};
 local Options = {};
 
@@ -3531,7 +3556,7 @@ function Library:CreateWindow(...)
                 end;
 
                 Button.InputBegan:Connect(function(Input)
-                    if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
+                    if Input.UserIne == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
                         Tab:Show();
                         Tab:Resize();
                     end;
@@ -3679,98 +3704,5 @@ end;
 Players.PlayerAdded:Connect(OnPlayerChange);
 Players.PlayerRemoving:Connect(OnPlayerChange);
 
-function Library:CreateSearchableTextbox(Parent, Items, Callback)
-    local SearchBox = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor,
-        BorderColor3 = Library.OutlineColor,
-        Size = UDim2.new(1, 0, 0, 30),
-        ZIndex = 5,
-        Parent = Parent,
-    })
-
-    Library:AddToRegistry(SearchBox, {
-        BackgroundColor3 = 'MainColor',
-        BorderColor3 = 'OutlineColor',
-    })
-
-    local TextBox = Library:Create('TextBox', {
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, -10, 0, 20),
-        Position = UDim2.new(0, 5, 0, 5),
-        Font = Library.Font,
-        PlaceholderText = "Search...",
-        Text = "",
-        TextColor3 = Library.FontColor,
-        TextSize = 14,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        ZIndex = 6,
-        Parent = SearchBox,
-    })
-
-    Library:ApplyTextStroke(TextBox)
-
-    local ResultsFrame = Library:Create('ScrollingFrame', {
-        BackgroundColor3 = Library.BackgroundColor,
-        BorderColor3 = Library.OutlineColor,
-        Position = UDim2.new(0, 0, 1, 5),
-        Size = UDim2.new(1, 0, 0, 100),
-        CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarThickness = 4,
-        ZIndex = 5,
-        Parent = SearchBox,
-    })
-
-    Library:AddToRegistry(ResultsFrame, {
-        BackgroundColor3 = 'BackgroundColor',
-        BorderColor3 = 'OutlineColor',
-    })
-
-    Library:Create('UIListLayout', {
-        Padding = UDim.new(0, 2),
-        FillDirection = Enum.FillDirection.Vertical,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Parent = ResultsFrame,
-    })
-
-    local function UpdateResults(query)
-        for _, child in ipairs(ResultsFrame:GetChildren()) do
-            if not child:IsA('UIListLayout') then
-                child:Destroy()
-            end
-        end
-
-        for _, item in ipairs(Items) do
-            if string.find(string.lower(item), string.lower(query)) then
-                local ResultButton = Library:Create('TextButton', {
-                    BackgroundColor3 = Library.MainColor,
-                    BorderColor3 = Library.OutlineColor,
-                    Size = UDim2.new(1, -4, 0, 20),
-                    Text = item,
-                    TextColor3 = Library.FontColor,
-                    TextSize = 14,
-                    ZIndex = 6,
-                    Parent = ResultsFrame,
-                })
-
-                Library:AddToRegistry(ResultButton, {
-                    BackgroundColor3 = 'MainColor',
-                    BorderColor3 = 'OutlineColor',
-                })
-
-                ResultButton.MouseButton1Click:Connect(function()
-                    Callback(item)
-                end)
-            end
-        end
-
-        ResultsFrame.CanvasSize = UDim2.new(0, 0, 0, ResultsFrame.UIListLayout.AbsoluteContentSize.Y)
-    end
-
-    TextBox:GetPropertyChangedSignal("Text"):Connect(function()
-        UpdateResults(TextBox.Text)
-    end)
-
-    UpdateResults("") -- Initialize with all items
-end
 getgenv().Library = Library
 return Library
