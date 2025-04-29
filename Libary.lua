@@ -16,32 +16,7 @@ ProtectGui(ScreenGui);
 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
 ScreenGui.Parent = CoreGui;
-local RunService = game:GetService("RunService")
 
-local BackgroundFrame = Instance.new("Frame")
-BackgroundFrame.Size = UDim2.new(1, 0, 1, 0)
-BackgroundFrame.Position = UDim2.new(0, 0, 0, 0)
-BackgroundFrame.BackgroundTransparency = 1
-BackgroundFrame.ZIndex = 0
-BackgroundFrame.Parent = ScreenGui
-
-local Gradient = Instance.new("UIGradient")
-Gradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.new(0, 1, 0)),
-    ColorSequenceKeypoint.new(0.5, Color3.new(0, 0, 0)),
-    ColorSequenceKeypoint.new(1, Color3.new(0, 1, 0))
-})
-Gradient.Rotation = 90
-Gradient.Parent = BackgroundFrame
-
-local offset = 0
-RunService.RenderStepped:Connect(function(deltaTime)
-    offset = offset + deltaTime * 0.5
-    if offset > 1 then
-        offset = offset - 1
-    end
-    Gradient.Offset = Vector2.new(0, offset)
-end)
 local Toggles = {};
 local Options = {};
 
@@ -69,6 +44,7 @@ local Library = {
 
     Signals = {};
     ScreenGui = ScreenGui;
+    CustomAssetId = "rbxassetid://12977615774", -- Default asset ID
 };
 
 local RainbowStep = 0
@@ -3556,7 +3532,7 @@ function Library:CreateWindow(...)
                 end;
 
                 Button.InputBegan:Connect(function(Input)
-                    if Input.UserIne == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
+                    if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
                         Tab:Show();
                         Tab:Resize();
                     end;
