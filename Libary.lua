@@ -3025,18 +3025,16 @@ function Library:CreateWindow(...)
             ZIndex = 100, -- Ensure it appears above other UI elements
             Parent = ScreenGui,
         })
-
-        CircularIcon.Size = UDim2.new(0, 100, 0, 100) -- Reapply size to ensure it takes effect
-
-        -- Make the icon circular
+    
+        -- Add a UICorner to make the icon circular
         local UICorner = Instance.new("UICorner", CircularIcon)
         UICorner.CornerRadius = UDim.new(1, 0) -- Fully circular
-
+    
         -- Add click functionality to toggle UI visibility and copy the Discord link
         CircularIcon.MouseButton1Click:Connect(function()
             setclipboard("https://discord.gg/xkYzren9AF") -- Replace with your Discord link
             Library:Notify("Discord link copied to clipboard!", 2)
-
+    
             -- Toggle UI visibility
             if Library.Holder.Visible then
                 Library.Holder.Visible = false
@@ -3046,7 +3044,7 @@ function Library:CreateWindow(...)
                 Library.NoUI = false
             end
         end)
-
+    
         -- Make the icon draggable
         local dragging, dragStart, startPos
         local function update(input)
@@ -3058,7 +3056,7 @@ function Library:CreateWindow(...)
                 startPos.Y.Offset + delta.Y
             )
         end
-
+    
         CircularIcon.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = true
@@ -3066,13 +3064,13 @@ function Library:CreateWindow(...)
                 startPos = CircularIcon.Position
             end
         end)
-
+    
         CircularIcon.InputEnded:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.MouseButton1 then
                 dragging = false
             end
         end)
-
+    
         InputService.InputChanged:Connect(function(input)
             if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                 update(input)
